@@ -1,5 +1,6 @@
 # iSRL-26-03-R-Allergen — Task Guide
 **Part 1 of 2 | March 2026**
+FILL OUT THIS FORM ONCE YOU HAVE COMPLETED READING - https://forms.gle/ABDZi6kDXf96Qoyy6
 
 ---
 
@@ -105,7 +106,7 @@ Budget approximately **4–5 hours per milestone**. In every block of work, keep
 3. Create your private repository (see Section 4)
 4. Create an Overleaf account at [overleaf.com](https://www.overleaf.com). You do not need to know LaTeX yet — Part 2 has a minimal template that shows you what you need
 5. Read Part 1 fully and skim Part 2
-6. Submit the **Milestone 0 Google Form** (link shared separately). It will ask for your GitHub ID, your confidence ratings across relevant skills, and your **magic sentence** — you will know what that means once you have read this document carefully
+6. Submit the [**Milestone 0 Google Form**](https://forms.gle/ABDZi6kDXf96Qoyy6). It will ask for your GitHub ID, your preferred SP's, and your **magic sentence** — you will know what that means once you have read this document carefully
 
 ---
 
