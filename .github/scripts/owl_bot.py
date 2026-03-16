@@ -185,18 +185,20 @@ def load_docs_index() -> dict:
 
 
 def fuzzy_docs_lookup(query: str) -> tuple | None:
-    """Return (matched_key, url) for the best (longest) partial keyword match."""
+    """Return (matched_key, url, desc) for the best (longest) partial keyword match."""
     index = load_docs_index()
     q = query.lower()
     best_key = None
     best_url = None
-    for key, url in index.items():
+    best_desc = None
+    for key, entry in index.items():
         k = key.lower()
         if q in k or k in q:
             if best_key is None or len(k) > len(best_key):
                 best_key = k
-                best_url = url
-    return (best_key, best_url) if best_key else None
+                best_url = entry["url"]
+                best_desc = entry["desc"]
+    return (best_key, best_url, best_desc) if best_key else None
 
 
 # ---------------------------------------------------------------------------
@@ -252,18 +254,21 @@ def search_discussions(query: str) -> list:
 # ---------------------------------------------------------------------------
 
 
-def build_docs_reply(query: str, url: str) -> str:
+def build_docs_reply(query: str, url: str, desc: str, author: str) -> str:
+    mention = f"@{author} " if author else ""
     return (
-        f'🦉 hoot hoot! here\'s what I found for "**{query}**":\n\n'
+        f'{mention}🦉 hoot hoot! here\'s what I found for "**{query}**":\n\n'
         f"📖 **from the docs:**\n"
-        f"→ {url}"
+        f"→ *{desc}*\n"
+        f"  {url}"
         + FOOTER
     )
 
 
-def build_discussion_reply(query: str, matches: list) -> str:
+def build_discussion_reply(query: str, matches: list, author: str) -> str:
+    mention = f"@{author} " if author else ""
     lines = [
-        f'🦉 hoot hoot! "**{query}**" isn\'t in my docs index but found these in our discussions:\n',
+        f'{mention}🦉 hoot hoot! "**{query}**" isn\'t in my docs index but found these in our discussions:\n',
         "💬 **from the discussions:**",
     ]
     for m in matches:
@@ -271,9 +276,10 @@ def build_discussion_reply(query: str, matches: list) -> str:
     return "\n".join(lines) + FOOTER
 
 
-def build_nothing_reply(query: str) -> str:
+def build_nothing_reply(query: str, author: str) -> str:
+    mention = f"@{author} " if author else ""
     return (
-        f'🦉 hoot... I looked everywhere and couldn\'t find anything for "**{query}**".\n\n'
+        f'{mention}🦉 hoot... I looked everywhere and couldn\'t find anything for "**{query}**".\n\n'
         "*here's how to ask so someone can actually help:*\n"
         "*• what exactly are you trying to do?*\n"
         "*• what did you try?*\n"
@@ -338,18 +344,18 @@ def main():
     # Step 1: docs lookup
     match = fuzzy_docs_lookup(query)
     if match:
-        _, url = match
-        post_reply(build_docs_reply(query, url))
+        _, url, desc = match
+        post_reply(build_docs_reply(query, url, desc, COMMENT_AUTHOR))
         return
 
     # Step 2: discussion search
     matches = search_discussions(query)
     if matches:
-        post_reply(build_discussion_reply(query, matches))
+        post_reply(build_discussion_reply(query, matches, COMMENT_AUTHOR))
         return
 
     # Step 3: nothing found
-    post_reply(build_nothing_reply(query))
+    post_reply(build_nothing_reply(query, COMMENT_AUTHOR))
 
 
 if __name__ == "__main__":
